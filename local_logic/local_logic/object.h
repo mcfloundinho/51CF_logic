@@ -19,7 +19,7 @@ private:
 };
 
 template<typename T>
-Object<T>::ID() const
+int Object<T>::ID() const
 {
 	return m_id;
 }
@@ -34,8 +34,5 @@ Object<T>::Object()
 //拷贝时的构造函数，不递增count
 template<typename T>
 Object<T>::Object(TId id):m_id(id){}
-
-template<typename T>
-Object<T>::Object(TId id) : m_id(id) {}
 
 #endif  //OBJECT_H
