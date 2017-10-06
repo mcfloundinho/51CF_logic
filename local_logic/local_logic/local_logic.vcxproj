@@ -148,7 +148,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="definition.h" />
+    <ClInclude Include="map.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="student.h" />
     <ClInclude Include="tentacle.h" />
   </ItemGroup>

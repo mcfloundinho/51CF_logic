@@ -1,0 +1,3 @@
+2017/10/6 22:01 by Chiba
+#修改definition中的pointstatus枚举名（Barrier->Blocked）防止名冲突
+#增加player.h

@@ -27,5 +27,11 @@
     <ClInclude Include="student.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
