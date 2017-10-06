@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="definition.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="student.h" />
     <ClInclude Include="tentacle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

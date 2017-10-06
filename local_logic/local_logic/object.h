@@ -19,7 +19,7 @@ private:
 };
 
 template<typename T>
-int Object<T>::ID() const
+TId Object<T>::ID() const
 {
 	return m_id;
 }

@@ -24,5 +24,8 @@
     <ClInclude Include="definition.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="student.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
