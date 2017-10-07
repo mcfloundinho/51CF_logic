@@ -24,6 +24,7 @@ private:
 	std::size_t m_maxControlNumber;    //最大控制数
 
 	bool m_hacked = false;                //是否被黑
+	bool m_alive = true;                  //是否还活着
 
 	//升级各种被动属性，返回是否成功
 	bool _updateRegeneration();
@@ -42,6 +43,7 @@ public:
 	//得到各种量
 
 	bool isHacked();
+	bool isAlive();
 	TResourceD techPoint();
 	std::vector<TId> getStudents();
 	std::size_t maxControlNumber();

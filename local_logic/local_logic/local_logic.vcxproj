@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="definition.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />

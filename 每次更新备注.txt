@@ -1,3 +1,8 @@
 2017/10/6 22:01 by Chiba
 #修改definition中的pointstatus枚举名（Barrier->Blocked）防止名冲突
 #增加player.h
+
+2017/10/7 14:52 by Chiba
+#分离Map类继承自BaseMap
+#完成给选手的信息（Info类）/还差CommendList
+#Game刚开头
