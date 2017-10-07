@@ -17,7 +17,7 @@ namespace DATA {
 		static vector<Student>  students;
 		static vector<Tentacle> tentacles;
 		static vector<Player>   players;
-		static Map              gameMap;
+		//static Map              gameMap1;
 	};
 }
 

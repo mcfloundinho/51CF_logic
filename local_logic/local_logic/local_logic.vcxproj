@@ -156,6 +156,10 @@
     <ClInclude Include="student.h" />
     <ClInclude Include="tentacle.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="student.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
