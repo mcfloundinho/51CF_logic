@@ -42,5 +42,6 @@ bool Map::init()
 		_barrier.m_endPoint = endP;
 		m_barrier.push_back(_barrier);
 	}
+	inMap.close();
 	return true;
 }
