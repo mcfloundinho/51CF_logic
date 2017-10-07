@@ -18,23 +18,29 @@ typedef int    TLevel;  //各项属性等级
 typedef int    TRound;  //回合数
 typedef double TPower;  //倍率
 
-const TSpeed     BASE_LEARN_ABILITY[5]{ 1,1.5,2,2.5,3 };
-const TResourceI STUDENT_STAGE[4]{ 10,40,80,150 };
+const TLevel     STUDENT_LEVEL_COUNT = 5;
 const TResourceI MAX_RESOURCE = 200;
+const TSpeed     BASE_REGENERETION_SPEED[STUDENT_LEVEL_COUNT]{ 1,1.5,2,2.5,3 };
+const TResourceI STUDENT_STAGE[STUDENT_LEVEL_COUNT + 1]{ 0 ,10,40,80,150,MAX_RESOURCE };
 const int        NO_DATA = -1;
 
 //最大技能等级
-const TLevel MAX_REGENERATION_SPEED_LEVEL = 6;
-const TLevel MAX_EXTENDING_SPEED_LEVEL = 6;
-const TLevel MAX_EXTRA_CONTROL_LEVEL = 4;
-const TLevel MAX_DEFENCE_LEVEL = 4;
+const TLevel MAX_REGENERATION_SPEED_LEVEL = 5;
+const TLevel MAX_EXTENDING_SPEED_LEVEL = 5;
+const TLevel MAX_EXTRA_CONTROL_LEVEL = 3;
+const TLevel MAX_DEFENCE_LEVEL = 3;
 
 //各技能等级对应数值
-const TPower RegenerationSpeedStage[MAX_REGENERATION_SPEED_LEVEL] = { 1,1.05,1.1,1.15,1.2,1.25 };
-const TPower ExtendingSpeedStage[MAX_EXTENDING_SPEED_LEVEL] = { 1,1.1,1.2,1.3,1.4,1.5 };
-const TPower ExtraControlStage[MAX_EXTRA_CONTROL_LEVEL] = { 0,0.5,1,1.5 };
-const TPower DefenceStage[MAX_DEFENCE_LEVEL] = { 1.5,1.4,1.3,1.2 };
+const TPower RegenerationSpeedStage[MAX_REGENERATION_SPEED_LEVEL + 1] = { 1,1.05,1.1,1.15,1.2,1.25 };
+const TPower ExtendingSpeedStage[MAX_EXTENDING_SPEED_LEVEL + 1] = { 1,1.1,1.2,1.3,1.4,1.5 };
+const TPower ExtraControlStage[MAX_EXTRA_CONTROL_LEVEL + 1] = { 0,0.5,1,1.5 };
+const TPower DefenceStage[MAX_DEFENCE_LEVEL + 1] = { 1.5,1.4,1.3,1.2 };
 
+//各个技能升级所需科创点数
+const TResourceD RegenerationSpeedUpdateCost[MAX_REGENERATION_SPEED_LEVEL] = {2,4,6,8,10};
+const TResourceD ExtendingSpeedUpdateCost[MAX_EXTENDING_SPEED_LEVEL] = {2,4,6,8,10};
+const TResourceD ExtraControlStageUpdateCost[MAX_EXTRA_CONTROL_LEVEL] = {3,5,7};
+const TResourceD DefenceStageUpdateCost[MAX_DEFENCE_LEVEL] = {3,5,7};
 
 enum TDepartment
 {
@@ -151,7 +157,6 @@ struct TentacleInfo
 	TResourceI      m_backResource;               //切断后后方资源（切断后有效）
 	TId             m_enemyTentacle;              //对方触手
 };
-
 
 struct TBarrier
 {

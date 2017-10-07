@@ -6,3 +6,7 @@
 #分离Map类继承自BaseMap
 #完成给选手的信息（Info类）/还差CommendList
 #Game刚开头
+
+2017/10/7 18:20 by Chiba
+#data.h存储数据
+#改进definition的细胞阶段/增加升级消耗量
