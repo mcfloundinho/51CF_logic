@@ -3,26 +3,31 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
 using namespace std;
 typedef double TSpeed;
 typedef double TResourceD;  //double 的资源数，用于内部操作
 typedef int    TResourceI;  //int    的资源数，用于显示
 typedef double TLength;
-typedef int    TStudentID ;
+typedef int    TStudentID;
 typedef int    TLA;
 typedef int    TPosition;
 typedef int    TCamp;
+typedef string TMapID;
 typedef int    TMap;
-typedef int    TMapID;
 typedef int    TLevel;  //各项属性等级
 typedef int    TRound;  //回合数
 typedef double TPower;  //倍率
+typedef int    TTentacleNum;
+typedef int    TTentacleID;
 
-const TLevel     STUDENT_LEVEL_COUNT = 5;
-const TResourceI MAX_RESOURCE = 200;
-const TSpeed     BASE_REGENERETION_SPEED[STUDENT_LEVEL_COUNT]{ 1,1.5,2,2.5,3 };
-const TResourceI STUDENT_STAGE[STUDENT_LEVEL_COUNT + 1]{ 0 ,10,40,80,150,MAX_RESOURCE };
-const int        NO_DATA = -1;
+
+const TLevel       STUDENT_LEVEL_COUNT = 5;
+const TResourceI   MAX_RESOURCE = 200;
+const TSpeed       BASE_REGENERETION_SPEED[STUDENT_LEVEL_COUNT]{ 1,1.5,2,2.5,3 };
+const TTentacleNum TENTACLE_NUMBER[STUDENT_LEVEL_COUNT]{1,2,2,3,3};  //可伸触手数量
+const TResourceI   STUDENT_STAGE[STUDENT_LEVEL_COUNT + 1]{ 0 ,10,40,80,150,MAX_RESOURCE };
+const int          NO_DATA = -1;
 
 //最大技能等级
 const TLevel MAX_REGENERATION_SPEED_LEVEL = 5;
@@ -104,7 +109,7 @@ TLength getDistance(const TPoint& p1, const TPoint& p2)
 
 enum StudentType  //学生种类的枚举
 { 
-    XianYu,
+    XianYu=0,
 	XueZha,
 	XueBa,
 	DaLao,
@@ -167,7 +172,8 @@ struct TBarrier
 class BaseMap
 {
 public:
-	TMap   getWidth()  const { return m_width; }
+	void   setID(TMapID _id) { id = _id;        }
+	TMap   getWidth()  const { return m_width;  }
 	TMap   getHeigth() const { return m_height; }
 	bool   passable(TPoint p1, TPoint p2)   //判断触手能否连接这两个点
 	{
@@ -191,11 +197,11 @@ public:
 	bool   isPosValid(int x, int y) { return x >= 0 && x < m_width&&y >= 0 && y <= m_height; }
 
 	const  vector<TPoint>  &  getStudentPos() const { return m_studentPos; }
-	const  vector<TBarrier>&  getBarriar()    const { return m_barrier; }
+	const  vector<TBarrier>&  getBarriar()    const { return m_barrier;    }
 protected:
-	TMapID            id;                  //记录地图的id，由game赋值，被init函数使用，选择对应的文件
-	TMap              m_width;
-	TMap              m_height;
+	string             id;                  //记录地图的id，由game赋值，被init函数使用，选择对应的文件
+	TMap               m_width;
+	TMap               m_height;
 	vector<TPoint>     m_studentPos;        //只设定细胞的坐标，之后的势力分配交给game
 	vector<TBarrier>   m_barrier;
 private:
