@@ -33,10 +33,11 @@ public:
 	inline  void           setLeftLA(TLA);
 	inline  TCamp          getCamp();
 	inline  void           setCamp(TCamp _camp);
-	inline  TPoint          getPos();
+	inline  TPoint         getPos();
 	inline  void           setPos(const TPoint& _point);
 	inline  void           setOccupyLA(TLA _LA);
 	inline  TLA            getOccupyLA();
+
 
 	bool    LAempty();                  //学力值是否减为0
 
@@ -51,7 +52,7 @@ private:
 	TCamp            m_camp;             //所属阵营  int
 	TStudentID       id;                 //学生id   int
 	TLA              m_leftLA;           //剩余学力值
-	TPoint            m_position;         //所在点的位置等信息
+	TPoint           m_position;         //所在点的位置等信息
 	TLA              m_occupyLA;         //中立同学的占有值
 	vector<Tentacle> m_preTentacle;      //当前伸出去的触手
 	vector<Student>  m_attackedBy;       //正在被被哪些同学攻击
