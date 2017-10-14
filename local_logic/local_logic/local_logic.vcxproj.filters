@@ -41,7 +41,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="tentacle.cpp">
+=======
+    <ClCompile Include="map.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="student.cpp">
+>>>>>>> bf92b076f5689c71cb3750dacfdd24e02be52218
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

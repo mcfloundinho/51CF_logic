@@ -13,7 +13,7 @@ class Game
 {
 public:
 	void loadMap(string filename,size_t index);
-	void Run(vector<vector<>>)
+	//void Run(vector<vector<>>)
 };
 
 #endif // !GAME_H
