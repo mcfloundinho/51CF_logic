@@ -19,3 +19,6 @@
 #写完了tentacle.cpp
 #给Student和Tentacle增加接口
 #删除根目录下一些文件
+
+2017/10/15 15:28 by Chiba
+#写完了player.cpp

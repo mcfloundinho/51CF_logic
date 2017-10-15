@@ -63,7 +63,7 @@ enum TDepartment
 	, Environment        //环境
 };
 
-enum TPlayerProperty
+enum TPlayerPowerProperty
 {
 	RegenerationSpeed    //再生速度
 	, ExtendingSpeed //延伸速度

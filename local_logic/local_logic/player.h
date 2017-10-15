@@ -3,7 +3,7 @@
 
 #include "definition.h"
 #include "object.h"
-#include "vector"
+#include <vector>
 
 
 class Student;
@@ -27,32 +27,34 @@ private:
 	bool m_alive = true;                  //是否还活着
 
 	//升级各种被动属性，返回是否成功
-	bool _updateRegeneration();
-	bool _updateExtending();
-	bool _updateExtraControl();
-	bool _updateDefence();
+	bool _upgradeRegeneration();
+	bool _upgradeExtending();
+	bool _upgradeExtraControl();
+	bool _upgradeDefence();
 
 public:
 
 	void addStudent(TId student);             //增加同学
 	void removeStudent(TId student);          //减少同学
 	void setHacked(bool isHacked);            //设置是否被黑
-	bool update(TPlayerProperty property);    //升级    
+	bool upgrade(TPlayerPowerProperty property);    //升级    
 	void addTechPoint();                      //根据当前细胞增加科技点数
+	void Kill();                              //杀死该玩家
 
 	//得到各种量
 
-	bool isHacked();
-	bool isAlive();
-	TResourceD techPoint();
-	std::vector<TId> getStudents();
-	std::size_t maxControlNumber();
-	TDepartment getDepartment();
-	TLevel regenerationSpeedLevel();
-	TLevel extendingSpeedLevel();
-	TLevel extraControlLevel();
-	TLevel defenceLevel();
-	TRound skillLeftRound();
+	bool isHacked() { return m_hacked; }
+	bool isAlive() { return m_alive; }
+	TResourceD techPoint() { return m_technologyPoint; }
+	std::vector<TId> getStudents() { return m_students; }
+	std::size_t getStudentNumber() { return m_students.size(); }
+	std::size_t maxControlNumber() { return m_maxControlNumber;}
+	TDepartment getDepartment() { return m_department; }
+	TLevel regenerationSpeedLevel() { return m_RegenerationSpeedLevel; }
+	TLevel extendingSpeedLevel() { return m_ExtendingSpeedLevel; }
+	TLevel extraControlLevel() { return m_ExtraControlLevel; }
+	TLevel defenceLevel() { return m_DefenceLevel; }
+	TRound skillLeftRound() { return m_skillLeftRound; }
 };
 
 #endif // PLAYER_H

@@ -19,6 +19,8 @@ struct StudentProperty
    TLA m_maxLA;
    int m_maxTentacleNum;  //最大触手数量
    TSpeed m_regenarationSpeed;  //再生速度
+   TSpeed m_techSpeed;    //科创点数
+   bool m_special;        //是否是特殊细胞/tech再生与LA再生是否关联
 };
 
 
