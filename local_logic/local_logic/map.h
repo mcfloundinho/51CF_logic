@@ -1,25 +1,27 @@
-#pragma once
-
 #ifndef MAP_H_
-#define MAP_h_
+#define MAP_H_
 #include<vector>
 #include <string>
-#include "data.h"
+#include "definition.h"
 using namespace std;
-using namespace DATA;
+namespace DATA 
+{
+	class Data;
+}
 
 
 class Map:public BaseMap
 {
 public:
-	//Map();
+	Map(DATA::Data* _data);
 	//~Map();
 
 	//void   setWidth(TMap );
 	//void   setHeiget(TMap );
 	
-	bool   init();            //利用文件初始化当前地图,不成功返回false
-
+	bool   init(TMapID filename);            //利用文件初始化当前地图,不成功返回false
+private:
+	DATA::Data* data;
 };
 
-#endif
+#endif //_MAP_H_

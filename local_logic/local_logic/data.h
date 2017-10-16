@@ -14,10 +14,10 @@ using std::vector;
 namespace DATA {
 	struct Data
 	{
-		static vector<Student>  students;
-		static vector<Tentacle> tentacles;
-		static vector<Player>   players;
-		//static Map              gameMap1;
+		vector<Student>  students;
+		vector<Tentacle> tentacles;
+		vector<Player>   players;
+		Map              gameMap1;
 	};
 }
 

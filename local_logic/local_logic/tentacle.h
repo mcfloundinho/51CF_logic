@@ -2,7 +2,10 @@
 #define TENTACLE_H
 #include "definition.h"
 #include "object.h"
-
+namespace DATA
+{
+	class Data;
+}
 //用来表示对目标同学结算效果的临时变量
 struct TransEffect
 {
@@ -24,10 +27,11 @@ private:
 	      TResourceD      m_frontResource;              //切断后前方资源（切断后有效）
 	      TResourceD      m_backResource;               //切断后后方资源（切断后有效）
 	      TId             m_enemyTentacle;              //对方触手
+		  DATA::Data* const     data;
 
 public:
 	//新建触手
-	Tentacle(TId source, TId target);
+	Tentacle(TId source, TId target, DATA::Data* _data);
 	//切断触手，position为从源细胞算起的资源数，返回值表示是否成功
 	bool cut(int position = 0);
 	

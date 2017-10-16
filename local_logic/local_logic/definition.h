@@ -8,9 +8,10 @@ using namespace std;
 typedef double TSpeed;
 typedef double TResourceD;  //double 的资源数，用于内部操作
 typedef int    TResourceI;  //int    的资源数，用于显示
+typedef int    TId;
 typedef double TLength;
 typedef int    TStudentID;
-typedef int    TLA;
+typedef double TResourceD;
 typedef int    TPosition;
 typedef int    TCamp;
 typedef string TMapID;
@@ -32,6 +33,7 @@ const TSpeed       BASE_REGENERETION_SPEED[STUDENT_LEVEL_COUNT]{ 1,1.5,2,2.5,3 }
 const TTentacleNum TENTACLE_NUMBER[STUDENT_LEVEL_COUNT]{1,2,2,3,3};  //可伸触手数量
 const TResourceI   STUDENT_STAGE[STUDENT_LEVEL_COUNT + 1]{ 0 ,10,40,80,150,MAX_RESOURCE };
 const int          NO_DATA = -1;
+const TCamp        Neutral = NO_DATA;
 
 //最大技能等级
 const TLevel MAX_REGENERATION_SPEED_LEVEL = 5;
@@ -118,8 +120,7 @@ enum StudentType  //学生种类的枚举
 	XueZha,
 	XueBa,
 	DaLao,
-	JuLao,
-	Neutral
+	JuLao
 };  
 
 struct StudentInfo

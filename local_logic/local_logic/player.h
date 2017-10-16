@@ -4,7 +4,10 @@
 #include "definition.h"
 #include "object.h"
 #include <vector>
-
+namespace DATA
+{
+	class Data;
+}
 
 class Student;
 
@@ -23,6 +26,8 @@ private:
 	TRound m_skillLeftRound = 0;       //剩余主动技能回合
 	std::size_t m_maxControlNumber;    //最大控制数
 
+	DATA::Data* const  data;
+
 	bool m_hacked = false;                //是否被黑
 	bool m_alive = true;                  //是否还活着
 
@@ -33,6 +38,7 @@ private:
 	bool _upgradeDefence();
 
 public:
+	Player(DATA::Data* _data, TDepartment _department, std::vector<TId> _stu);
 
 	void addStudent(TId student);             //增加同学
 	void removeStudent(TId student);          //减少同学
@@ -40,6 +46,7 @@ public:
 	bool upgrade(TPlayerPowerProperty property);    //升级    
 	void addTechPoint();                      //根据当前细胞增加科技点数
 	void Kill();                              //杀死该玩家
+	void updateMaxControl() { m_maxControlNumber = m_students.size() / 2 + 1; }
 
 	//得到各种量
 

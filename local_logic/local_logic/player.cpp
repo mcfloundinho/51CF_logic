@@ -2,6 +2,13 @@
 #include "data.h"
 using namespace DATA;
 
+
+Player::Player(DATA::Data* _data, TDepartment _department, std::vector<TId> _stu) :
+	data(_data), m_department(_department), m_students(_stu)
+{
+
+}
+
 bool Player::_upgradeRegeneration()
 {
 	//已经升到最高级直接返回
@@ -62,6 +69,7 @@ bool Player::_upgradeDefence()
 	return true;
 }
 
+
 void Player::addStudent(TId student)
 {
 	m_students.push_back(student);
@@ -103,7 +111,7 @@ bool Player::upgrade(TPlayerPowerProperty property)
 void Player::addTechPoint()
 {
 	for (TId StuId : m_students)
-		m_technologyPoint += Data::students[StuId].getStudentProperty().m_techSpeed;
+		m_technologyPoint += data->students[StuId].getStudentProperty().m_techSpeed;
 }
 
 void Player::Kill()
