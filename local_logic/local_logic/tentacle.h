@@ -42,7 +42,7 @@ public:
 	
 	bool           isTargetEnemy() const;
 	const TSpeed         getExtendSpeed()   const;
-	const TSpeed         getFontSpeed()   const;
+	const TSpeed         getFrontSpeed()   const;
 	const TSpeed         getBackSpeed()   const;
 	const TSpeed         getTransportSpeed()   const;
 	const TId            getTargetStudent() const { return m_targetStudent; }
@@ -52,8 +52,10 @@ public:
 	      TResourceI     getResource()      const { return m_resource; }
 	      TResourceI     getFrontResource() const { return m_frontResource; }
 	      TResourceI     getBackResource()  const { return m_backResource; }
+		  TTentacleID    getEnemyTentacle() const { return m_enemyTentacle; }
 		  void           setEnemyTentacle(TId enemy) { m_enemyTentacle = enemy; }
 		  void           setStatus(TentacleStatus ts) { m_status = ts; }
+	      TResourceD     totalResource()const;
 		  void           finish();                //结束这条触手的一生
 };
 

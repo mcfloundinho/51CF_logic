@@ -17,7 +17,7 @@ namespace DATA {
 		vector<Student>  students;
 		vector<Tentacle> tentacles;
 		vector<Player>   players;
-		Map              gameMap1;
+		Map              gameMap;
 	};
 }
 

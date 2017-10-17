@@ -28,3 +28,8 @@
 - 完善了map.cpp
 - 修复tentacle.cpp小错误
 - 用markdown重写这份备注
+
+## 2017/10/18 01:36 by Chiba
+- 进一步增加原先的接口便于Game.cpp的调用
+- 完成Game.cpp的几个阶段/还差结算的一小部分
+- 好困好累QAQ

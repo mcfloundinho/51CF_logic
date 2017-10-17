@@ -118,3 +118,15 @@ void Player::Kill()
 {
 	m_alive = false;
 }
+
+TResourceD Player::totalResource()
+{
+	TResourceD total = 0.0;
+	for (TStudentID stuid : m_students)
+	{
+		total += data->students[stuid].getLeftLA();
+		for (TTentacleID tenid : data->students[stuid].getTentacles())
+			total += data->tentacles[tenid].totalResource();
+	}
+	return total;
+}

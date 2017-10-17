@@ -18,7 +18,7 @@ using namespace std;
 struct StudentProperty
 {
    //TLA m_minLA;
-   //TLA m_maxLA;
+   TResourceD m_maxResource;
    int m_maxTentacleNum;  //最大触手数量
    TSpeed m_regenarationSpeed;  //再生速度
    TSpeed m_techSpeed;    //科创点数
@@ -30,7 +30,7 @@ class Student:public Object<Student>
 {
 public:
 	//Student();    不提供默认构造函数
-	Student(DATA::Data* _data,TPoint pos, TCamp campid, TResourceD resource, bool special, TSpeed techPoint);
+	Student(DATA::Data* _data,TPoint pos, TCamp campid, TResourceD resource,TResourceD maxResource, bool special, TSpeed techPoint);
 	~Student();
 	Student(const Student &) = default;
 	/*
@@ -60,7 +60,7 @@ public:
 	inline  StudentType      getStudentType()      const { return m_studentType;}
 	inline  StudentProperty& getStudentProperty()        { return m_property;   }
 	inline  vector<TId>&      getTentacles() { return m_preTentacle; }
-	inline  vector<TId>&      attackedBy() { return m_attackedBy; }
+	inline  vector<TTentacleID>&      attackedBy() { return m_attackedBy; }
 
 	inline  void             setOccupyLA(TResourceD _LA)    { m_occupyPoint = _LA; }
 	//inline  void             setId(TStudentID _id)   { id = _id;         }
@@ -68,10 +68,10 @@ public:
 	inline  void             setCampID(TCamp _camp)  { m_campID = _camp; }
 	inline  void             setStudentType(const StudentType & _type) { m_studentType = _type; }
 	inline  void             setPos(const TPoint& _point)              { m_position = _point;   }
+	inline  TResourceD       totalResource();    //返回该细胞资源值加其触手资源值
 
 	bool    resourceEmpty()     { return m_resource <= 0; }                  //学力值是否减为0
 	
-
 	void    addLA();                    //每一回合后的再生资源
 	//void    moveTentacle();             //移动自己的触手，资源归零将切断
 	//void    reduceLAForAttacked();      //因为被攻击而减少学力值，可遍历攻击自己的学生vector来计算
@@ -79,6 +79,8 @@ public:
 	bool    addTentacle(const TStudentID&);  //增加触手,学力不够返回false
 	bool    cutTentacle(TId _id, TPosition pos);       //在某一个点砍断触手，点无效则砍断操作无效,返回bool
 	void    updateProperty(bool special = false);            //根据当前资源更新属性
+	void    changeOwnerTo(TCamp newOwner);
+	void    N_addOcuppyPoint(TCamp owner, TResourceD point);  //N_前缀/只有中立细胞能够调用/加相应点数
 
 private:
 	StudentType      m_studentType;      //学生种类，大佬等 int	
@@ -91,6 +93,7 @@ private:
 	TCamp            m_campID;           //所属阵营  int
 	TPoint           m_position;         //所在点的位置等信息
 	TResourceD              m_occupyPoint;         //中立同学的占有值
+	TCamp               m_occupyOwner;       //中立点所属者
 	vector<TTentacleID> m_preTentacle;   //当前伸出去的触手
 	vector<TTentacleID> m_attackedBy;    //正在被被哪些触手攻击
 

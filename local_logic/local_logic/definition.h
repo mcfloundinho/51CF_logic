@@ -4,6 +4,8 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <initializer_list>
+#include <stdexcept>
 using namespace std;
 typedef double TSpeed;
 typedef double TResourceD;  //double 的资源数，用于内部操作
@@ -129,8 +131,8 @@ struct StudentInfo
 	StudentType type;
 	TId playerId;
 	vector<TId> tentacleIds;
-	TResourceD learnAbility;
-	TResourceD occupyLearingAbility; 
+	TResourceD resource;
+	TResourceD occupyPoint; 
 	vector<TId> attackTo;
 	vector<TId> attackBy;
 	TPoint position;
@@ -139,11 +141,11 @@ struct StudentInfo
 struct PlayerInfo
 {
 	TId id;
-	bool isAlive;
+
 	int rank;          //排名/按总学力/包括触手上的
 	vector<TId> studentIds;  //学生ID
-	TDepartment m_department;            //院系种类
-	TResourceD m_technologyPoint;        //科技点数
+	TDepartment department;            //院系种类
+	TResourceD technologyPoint;        //科技点数
 
 	TLevel RegenerationSpeedLevel;      //再生倍率等级
 	TLevel ExtendingSpeedLevel;         //延伸速度等级
@@ -153,20 +155,20 @@ struct PlayerInfo
 	TRound skillLeftRound = 0;       //剩余主动技能回合
 	size_t maxControlNumber;    //最大控制数
 
-	bool hacked;                //是否被黑
+	TRound hackedLeftRound;                //是否被黑
 	bool alive;                  //是否还活着
 };
 
 struct TentacleInfo
 {
-	TId             m_sourceStudent;              //源同学
-	TId             m_targetStudent;              //目标同学
-	TentacleStatus  m_status;                     //触手状态
-	TLength         m_length;                     //触手长度（由源/目标决定）
-	TResourceI      m_resource;                   //当前资源      （切断前有效）
-	TResourceI      m_frontResource;              //切断后前方资源（切断后有效）
-	TResourceI      m_backResource;               //切断后后方资源（切断后有效）
-	TId             m_enemyTentacle;              //对方触手
+	TId             sourceStudent;              //源同学
+	TId             targetStudent;              //目标同学
+	TentacleStatus  status;                     //触手状态
+	TLength         length;                     //触手长度（由源/目标决定）
+	TResourceI      resource;                   //当前资源      （切断前有效）
+	TResourceI      frontResource;              //切断后前方资源（切断后有效）
+	TResourceI      backResource;               //切断后后方资源（切断后有效）
+	TId             enemyTentacle;              //对方触手
 };
 
 struct TBarrier
@@ -216,11 +218,57 @@ private:
 	int max(int a, int b) { return a < b ? b : a; }
 };
 
+//命令种类
+enum CommandType
+{
+	activeSkill    //主动技能
+	,passiveSkill  //被动技能
+	,addTentacle   //添加
+	,cutTentacle   //切断
+};
+
+//保存命令相关信息
+struct Command
+{
+	Command(CommandType _type, initializer_list<int> _parameters):
+		type(_type),parameters(_parameters){}
+	CommandType type;
+	vector<int> parameters;  //参数
+};
+
+//命令列表
+class CommandList
+{
+public:
+	void addCommand(CommandType _type, initializer_list<int> _parameters)
+	{
+		m_commands.emplace_back(_type, _parameters);
+	}
+	void removeCommand(int n)
+	{
+		m_commands.erase(m_commands.begin() + n);
+	}
+	int  size() const{ return m_commands.size(); }
+	vector<Command>::iterator begin() { return m_commands.begin(); }
+	vector<Command>::iterator end() { return m_commands.end(); }
+	Command& operator[](int n)
+	{
+		if (n < 0 || size() <= n)
+			throw std::out_of_range("访问命令时越界");
+		return m_commands[n];
+	}
+private:
+	vector<Command> m_commands;
+};
+
 struct Info
 {
-	int playerCount;  //剩余玩家数
+	int playerSize;  //总玩家数
+	int playerAlive;  //剩余玩家数
 	int id;           //选手ID号
+	int myMaxControl;   //最大操作数
 	TRound round;     //回合数
+	CommandList myCommandList;
 	vector<PlayerInfo> playerInfo;   //势力信息
 	vector<StudentInfo> studentInfo; //同学信息
 	vector<TentacleInfo> tentacleInfo; //触手信息

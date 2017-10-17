@@ -13,13 +13,15 @@ namespace DATA
 class Map:public BaseMap
 {
 public:
-	Map(DATA::Data* _data);
+	Map():data(nullptr){}
+	void setData(DATA::Data* d) { data = d; }
 	//~Map();
 
 	//void   setWidth(TMap );
 	//void   setHeiget(TMap );
 	
-	bool   init(TMapID filename);            //利用文件初始化当前地图,不成功返回false
+	bool init(const TMapID& filename, TResourceI _MAX_RESOURCE_);
+	bool init(ifstream& inMap, TResourceI _MAX_RESOURCE_); //通过文件流初始化信息;
 private:
 	DATA::Data* data;
 };

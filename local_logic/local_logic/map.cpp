@@ -10,15 +10,8 @@ Map::Map(DATA::Data* _data):data(_data)
 {
 }
 
-bool Map::init(TMapID filename)  //通过文件初始化信息
-{	
-	setID(filename);
-	ifstream inMap(filename,ios_base::binary);
-	if (!inMap)
-	{
-		cerr << "can't open the map file" << endl;
-		return false;
-	}
+bool Map::init(ifstream& inMap,TResourceI _MAX_RESOURCE_)  //通过文件流初始化信息
+{
 
 	//初始化地图
 	inMap >> m_height;
@@ -69,7 +62,7 @@ bool Map::init(TMapID filename)  //通过文件初始化信息
 	TResourceD _resource;
 	bool special;
 	TResourceD _techPoint;
-
+	TResourceD _maxResource;
 	for (int i = 0; i < studentNum; i++)
 	{
 		inMap >> _point.m_x;
@@ -79,11 +72,26 @@ bool Map::init(TMapID filename)  //通过文件初始化信息
 
 		inMap >> _camp >> _resource >> special;
 		if (special)
-			inMap >> _techPoint;
-		Student stu(data, _point, _camp, _resource, special, _techPoint);
+			inMap >> _techPoint >> _maxResource;
+		else
+			_maxResource = _MAX_RESOURCE_;
+		Student stu(data, _point, _camp, _resource,_maxResource, special, _techPoint);
 		data->students.push_back(stu);
 	}
-
-	inMap.close();
 	return true;
+}
+
+bool Map::init(const TMapID& filename,TResourceI _MAX_RESOURCE_)
+{
+	bool ret;
+	setID(filename);
+	ifstream inMap(filename, ios_base::binary);
+	if (!inMap)
+	{
+		cerr << "can't open the map file" << endl;
+		return false;
+	}
+	ret = init(filename,_MAX_RESOURCE_);
+	inMap.close();
+	return ret;
 }

@@ -7,7 +7,7 @@ using namespace DATA;
 Student::~Student()
 {}
 
-Student::Student(DATA::Data* _data,TPoint pos, TCamp campid, TResourceD resource, bool special, TSpeed techPoint)
+Student::Student(DATA::Data* _data, TPoint pos, TCamp campid, TResourceD resource, TResourceD maxResource, bool special, TSpeed techPoint)
 	:m_campID(campid),m_resource(resource),m_position(pos),data(_data)
 {
 	updateProperty(special);
@@ -17,6 +17,7 @@ Student::Student(DATA::Data* _data,TPoint pos, TCamp campid, TResourceD resource
 	//特殊同学额外设置
 	if (special)
 		m_property.m_techSpeed = techPoint;
+	m_property.m_maxResource = maxResource;
 
 	//加入到Data中
 	data->students.push_back(*this);
@@ -33,12 +34,20 @@ Student::Student(DATA::Data* _data,TPoint pos, TCamp campid, TResourceD resource
 	*/
 }
 
+TResourceD Student::totalResource()
+{
+	TResourceD total = m_resource;
+	for (TTentacleID id : m_preTentacle)
+		total += data->tentacles[id].totalResource();
+	return total;
+}
+
 void Student::addLA()
 {
 	int level = data->players[m_campID].regenerationSpeedLevel();
 	double extraPower = 1.0;
 	//技能特判
-	if (data->players[m_campID].isHacked())
+	if (data->players[m_campID].HackedLeftRound() > 0)
 		extraPower /= 2;
 	if (data->players[m_campID].skillLeftRound > 0
 		&& data->players[m_campID].getDepartment() == Medical)
@@ -69,8 +78,7 @@ bool Student::cutTentacle(TId _id, TPosition pos)
 		return false;
 	
 	//否则切断触手
-	data->tentacles[*ans].cut();
-	m_preTentacle.erase(ans);
+	data->tentacles[*ans].cut(pos);
 	return true;
 }
 
@@ -91,4 +99,40 @@ void Student::updateProperty(bool special /*= false*/)
 	//通常细胞科创值为学习能力/10
 	if (!special)
 		m_property.m_techSpeed = m_property.m_regenarationSpeed / 10.0;
+}
+
+void Student::changeOwnerTo(TCamp newOwner)
+{
+	if (newOwner < -1 || newOwner >= data->players.size())
+		return;
+	//防止之前是中立：占有值归零
+	m_occupyPoint = 0;
+
+	m_resource = 10;
+	for (TTentacleID t : m_preTentacle)
+	{
+		if (data->tentacles[t].getStatus() != AfterCut)
+			cutTentacle(t, data->tentacles[t].getResource());
+	}
+	data->players[m_campID].removeStudent(ID());
+	//判定是否死亡
+	if (data->players[m_campID].getStudentNumber() == 0)
+		data->players[m_campID].Kill();
+	//不是中立
+	if (newOwner != Neutral)
+		data->players[newOwner].addStudent(ID());
+}
+
+void Student::N_addOcuppyPoint(TCamp owner, TResourceD point)
+{
+	if (m_occupyOwner != owner)
+		if (m_occupyPoint < point)
+		{
+			m_occupyPoint = point - m_occupyPoint;
+			m_occupyOwner = owner;
+		}
+		else
+			m_occupyPoint -= point;
+	else
+		m_occupyPoint += point;
 }

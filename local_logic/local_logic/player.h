@@ -28,7 +28,7 @@ private:
 
 	DATA::Data* const  data;
 
-	bool m_hacked = false;                //是否被黑
+	TRound m_hackedLeftRound = 0;                //是否被黑
 	bool m_alive = true;                  //是否还活着
 
 	//升级各种被动属性，返回是否成功
@@ -46,11 +46,12 @@ public:
 	bool upgrade(TPlayerPowerProperty property);    //升级    
 	void addTechPoint();                      //根据当前细胞增加科技点数
 	void Kill();                              //杀死该玩家
+	void reduceTech(TResourceD minus) { m_technologyPoint -= minus; }
 	void updateMaxControl() { m_maxControlNumber = m_students.size() / 2 + 1; }
 
 	//得到各种量
 
-	bool isHacked() { return m_hacked; }
+	TRound HackedLeftRound() { return m_hackedLeftRound; }
 	bool isAlive() { return m_alive; }
 	TResourceD techPoint() { return m_technologyPoint; }
 	std::vector<TId> getStudents() { return m_students; }
@@ -61,7 +62,11 @@ public:
 	TLevel extendingSpeedLevel() { return m_ExtendingSpeedLevel; }
 	TLevel extraControlLevel() { return m_ExtraControlLevel; }
 	TLevel defenceLevel() { return m_DefenceLevel; }
+	void   setSkillLeftRound(TRound round) { m_skillLeftRound = round; }
+	void   setMaxControl(int max) { m_maxControlNumber = max; }
+	void   setHackedRound(TRound round) { m_hackedLeftRound = round; }
 	TRound skillLeftRound() { return m_skillLeftRound; }
+	TResourceD totalResource();
 };
 
 #endif // PLAYER_H

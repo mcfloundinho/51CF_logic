@@ -66,7 +66,7 @@ const TSpeed Tentacle::getExtendSpeed() const
 	return BaseExtendSpeed*extraPower;
 }
 
-const TSpeed Tentacle::getFontSpeed() const
+const TSpeed Tentacle::getFrontSpeed() const
 {
 	TPower extraPower = 1.0;
 
@@ -122,6 +122,28 @@ const TSpeed Tentacle::getTransportSpeed() const
 	return TotalResource*extraPower / p_source->getTentacles().size();
 }
 
+TResourceD Tentacle::totalResource() const
+{
+	switch (m_status)
+	{
+	case Extending:
+	case Attacking:
+	case Backing:
+	case Confrontation:
+	case Arrived:
+		return m_resource;
+		break;
+	case AfterCut:
+		return m_frontResource + m_backResource;
+		break;
+	case Finished:
+		break;
+	default:
+		break;
+	}
+	return 0.0;
+}
+
 void Tentacle::finish()
 {
 	m_status = Finished;
@@ -131,6 +153,12 @@ void Tentacle::finish()
 	for (int i = 0; i != sourceTeneacles.size(); ++i)
 		if (sourceTeneacles[i] == ID())
 			sourceTeneacles.erase(sourceTeneacles.begin() + i);
+
+	//目标细胞中移除该触手
+	vector<TId>& targetTeneacles = data->students[m_targetStudent].attackedBy();
+	for (int i = 0; i != targetTeneacles.size(); ++i)
+		if (targetTeneacles[i] == ID())
+			targetTeneacles.erase(targetTeneacles.begin() + i);
 
 	//设置对峙触手属性
 	if (m_enemyTentacle != NO_DATA)
@@ -260,14 +288,16 @@ TransEffect Tentacle::transport()
 		//如果打的是自己人
 		if (!isTargetEnemy())
 			te.m_resourceToTarget = getTransportSpeed();
-		else
+		else if (data->students[m_targetStudent].getCampID() != Neutral)
 			te.m_resourceToTarget = -1.5 * getTransportSpeed();
+		else
+			te.m_resourceToTarget = -getTransportSpeed();
 	}
 		break;
 	case AfterCut:
 	{
 		bool over[2] = { false,false };   //判断是否传输完毕
-		if (getFontSpeed() > m_frontResource)
+		if (getFrontSpeed() > m_frontResource)
 		{
 			m_frontResource = 0;
 			over[0] = true;
@@ -278,11 +308,11 @@ TransEffect Tentacle::transport()
 		}
 		else
 		{
-			m_frontResource -= getFontSpeed();
+			m_frontResource -= getFrontSpeed();
 			if (!isTargetEnemy())
-				te.m_resourceToTarget = getFontSpeed();
+				te.m_resourceToTarget = getFrontSpeed();
 			else
-				te.m_resourceToTarget = -getFontSpeed();
+				te.m_resourceToTarget = -getFrontSpeed();
 		}
 		if (getBackSpeed() < m_backResource)
 		{
