@@ -19,8 +19,6 @@ Student::Student(DATA::Data* _data, TPoint pos, TCamp campid, TResourceD resourc
 		m_property.m_techSpeed = techPoint;
 	m_property.m_maxResource = maxResource;
 
-	//加入到Data中
-	data->students.push_back(*this);
 
 	//初始化的形式待定
 	/*  
@@ -65,8 +63,8 @@ bool Student::addTentacle(const TStudentID& _id)
 	}
 
 	Tentacle newTentacle(ID(), _id, data);
-	m_preTentacle.push_back(newTentacle.ID());
-	data->tentacles.push_back(newTentacle);
+	m_preTentacle.insert(newTentacle.ID());
+	data->tentacles.insert({ newTentacle.ID(),newTentacle });
 	return true;
 }
 
@@ -135,4 +133,8 @@ void Student::N_addOcuppyPoint(TCamp owner, TResourceD point)
 			m_occupyPoint -= point;
 	else
 		m_occupyPoint += point;
+
+	//如果达到资源值的1/3改变阵营
+	if (m_occupyPoint > m_resource / 3)
+		changeOwnerTo(m_occupyOwner);
 }

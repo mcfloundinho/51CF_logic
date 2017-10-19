@@ -4,6 +4,7 @@
 #include "definition.h"
 #include "object.h"
 #include <vector>
+#include <set>
 namespace DATA
 {
 	class Data;
@@ -14,7 +15,7 @@ class Student;
 class Player :public Object<Player>
 {
 private:
-	std::vector<TId> m_students;         //所属同学
+	std::set<TId> m_students;         //所属同学
 	TDepartment m_department;            //院系种类
 	TResourceD m_technologyPoint = 0.0;        //科技点数
 
@@ -40,9 +41,9 @@ private:
 public:
 	Player(DATA::Data* _data, TDepartment _department, std::vector<TId> _stu);
 
-	void addStudent(TId student);             //增加同学
-	void removeStudent(TId student);          //减少同学
-	void setHacked(bool isHacked);            //设置是否被黑
+	void addStudent(TStudentID student);             //增加同学
+	void removeStudent(TStudentID student);          //减少同学
+	void setHacked(TRound HachRound);
 	bool upgrade(TPlayerPowerProperty property);    //升级    
 	void addTechPoint();                      //根据当前细胞增加科技点数
 	void Kill();                              //杀死该玩家
@@ -54,7 +55,7 @@ public:
 	TRound HackedLeftRound() { return m_hackedLeftRound; }
 	bool isAlive() { return m_alive; }
 	TResourceD techPoint() { return m_technologyPoint; }
-	std::vector<TId> getStudents() { return m_students; }
+	std::set<TId> getStudents() { return m_students; }
 	std::size_t getStudentNumber() { return m_students.size(); }
 	std::size_t maxControlNumber() { return m_maxControlNumber;}
 	TDepartment getDepartment() { return m_department; }

@@ -1,15 +1,22 @@
 #include "Game.h"
+#include <set>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-
+#include <ctime>
 void Game::init(string filename)
 {
+	//创建Log文件//参考去年代码
+	char buffer[1024];
+	time_t t = time(0);
+	strftime(buffer, sizeof(buffer), "log_%Y%m%d_%H%M%S.txt", localtime(&t));
+	LogFile.open(buffer);
+	
 	data.gameMap.setData(&data);
 	ifstream in(filename, ios_base::binary);
 	if (!in)
 		cerr << "can't open the map file" << endl;
-	in >> _MAX_RESOURCE_;
+	in >> _MAX_RESOURCE_ >> _MAX_ROUND_;
 	if (data.gameMap.init(in, _MAX_RESOURCE_))
 		cerr << "地图初始化失败！";
 	in.close();
@@ -21,13 +28,27 @@ void Game::init(string filename)
 		Rank.push_back(i);
 }
 
+void Game::run()
+{
+	currentRound = 1;
+	while (currentRound <= _MAX_ROUND_)
+	{
+		updateLog();
+		Round();
+		if (playerAlive == 1)
+			break;
+		currentRound++;
+	}
+	updateLog();
+}
+
 //生成选手信息
 vector<Info>* Game::generateInfo()
 {
 	vector<Info>* info = new vector<Info>;
-	vector<PlayerInfo> playerInfo;   //势力信息
-	vector<StudentInfo> studentInfo; //同学信息
-	vector<TentacleInfo> tentacleInfo; //触手信息
+	map <TCamp,PlayerInfo> playerInfo;   //势力信息
+	map<TCamp,StudentInfo> studentInfo; //同学信息
+	map<TTentacleID,TentacleInfo> tentacleInfo; //触手信息
 	BaseMap* mapInfo;  //地图信息
 
 	//初始化阵营
@@ -48,7 +69,7 @@ vector<Info>* Game::generateInfo()
 		temp.skillLeftRound = curr->skillLeftRound();
 		temp.studentIds.assign(curr->getStudents().cbegin(), curr->getStudents().cend());
 		temp.technologyPoint = curr->techPoint();
-		playerInfo.push_back(temp);
+		playerInfo.insert({ temp.id,temp });
 	}
 
 	//初始化Stu
@@ -57,7 +78,6 @@ vector<Info>* Game::generateInfo()
 		StudentInfo temp;
 		Student* curr = &data.students[i];
 		temp.attackBy.assign(curr->attackedBy().cbegin(), curr->attackedBy().cend());
-		temp.attackTo.assign(curr->getTentacles().cbegin(), curr->getTentacles().cend());
 		temp.id = curr->ID();
 		temp.resource = curr->getLeftLA();
 		temp.occupyPoint = curr->getOccupyLA();
@@ -65,7 +85,7 @@ vector<Info>* Game::generateInfo()
 		temp.position = curr->getPos();
 		temp.tentacleIds.assign(curr->getTentacles().cbegin(), curr->getTentacles().cend());
 		temp.type = curr->getStudentType();
-		studentInfo.push_back(temp);
+		studentInfo.insert({ temp.id,temp });
 	}
 
 	//初始化Tentacle
@@ -73,6 +93,9 @@ vector<Info>* Game::generateInfo()
 	{
 		TentacleInfo temp;
 		Tentacle* curr = &data.tentacles[i];
+		if (curr->getStatus() == Finished)
+			continue;
+		temp.id = curr->ID();
 		temp.backResource = curr->getBackResource();
 		temp.enemyTentacle = curr->getEnemyTentacle();
 		temp.frontResource = curr->getFrontResource();
@@ -81,7 +104,7 @@ vector<Info>* Game::generateInfo()
 		temp.sourceStudent = curr->getSourceStudent();
 		temp.targetStudent = curr->getTargetStudent();
 		temp.status = curr->getStatus();
-		tentacleInfo.push_back(temp);
+		tentacleInfo.insert({ temp.id,temp });
 	}
 
 	//初始化地图，基类指针
@@ -94,6 +117,17 @@ vector<Info>* Game::generateInfo()
 	}
 
 	return info;
+}
+
+void Game::Round()
+{
+	regeneratePhase();
+	info = generateInfo();
+	/*调用player_ai(info[i])*/
+	skillPhase();
+	movePhase();
+	transPhase();
+	
 }
 
 void Game::skillPhase()
@@ -199,14 +233,15 @@ void Game::skillPhase()
 void Game::regeneratePhase()
 {
 	//回复科技点数
-	for (Player& p:data.players)
+	for (auto& p:data.players)
 	{
-		if (p.isAlive())
-			p.addTechPoint();
+		if (p.second.isAlive())
+			p.second.addTechPoint();
 	}
 	//每个细胞回复资源
-	for (Student& s:data.students)
+	for (auto& p:data.students)
 	{
+		Student& s = p.second;
 		TPower extraPower = 1.0;
 		if (s.getCampID() != Neutral) {
 			s.addLA();
@@ -214,11 +249,22 @@ void Game::regeneratePhase()
 	}
 }
 
+void Game::movePhase()
+{
+	for (auto &p : data.tentacles)
+	{
+		Tentacle& t = p.second;
+		TransEffect te = t.move();
+		data.students[t.getSourceStudent()].setResource(data.students[t.getSourceStudent()].getLeftLA() + te.m_resourceToSource);
+	}
+}
+
 void Game::transPhase()
 {
 	vector<TransEffect> Effects;     //保存传输信息，便于结算
-	for (Tentacle& t:data.tentacles)
+	for (auto& p:data.tentacles)
 	{
+		Tentacle& t = p.second;
 		if(t.getStatus()!=Finished)
 			Effects.push_back(t.transport());
 	}
@@ -228,8 +274,9 @@ void Game::transPhase()
 		totalEffect[e.m_sourceStudent] += e.m_resourceToSource;
 		totalEffect[e.m_targetStudent] += e.m_resourceToTarget;
 	}
-	for (Student& s:data.students)
+	for (auto& p:data.students)
 	{
+		Student& s = p.second;
 		if (s.getCampID() != Neutral)
 		{
 			//未减到0以下
@@ -238,55 +285,90 @@ void Game::transPhase()
 			//已经减到0以下
 			else
 			{
-				TCamp newOwner = Neutral;
-				TCamp onlyAttacker = s.getCampID();
-				int prior[3]{0};//优先度
-				for (TTentacleID id : s.attackedBy())
+				//重新检索te，因为AttackBy中的可能已经完成传输而死亡
+				vector<TCamp> priority[3];
+				for (TransEffect& e : Effects)
 				{
-					Tentacle& t = data.tentacles[id];
-					switch (t.getStatus())
+					if (e.m_targetStudent == s.ID())
 					{
-					case Extending:
-						break;
-					case Attacking:
-					case Backing:
-					case Confrontation:
-						prior[2] = true;
-						break;
-					case Arrived:
-						prior[1] = true;
-						break;
-					case AfterCut:
-						prior[0] = true;
-						break;
-					case Finished:
-						break;
-					default:
-						break;
-					}
-					if (t.getStatus() != Extending&&t.getStatus() != Finished)
-					{
-						if (onlyAttacker == s.getCampID())
-							onlyAttacker = t.getSourceStudent();
-						else if (onlyAttacker != t.getSourceStudent())
-							onlyAttacker = Neutral;
+						switch (e.m_currStatus)
+						{
+						case Extending:
+							break;
+						case Attacking:
+						case Backing:
+						case Confrontation:
+							priority[2].push_back(e.m_sourceStudent);
+						case Arrived:
+							priority[1].push_back(e.m_sourceStudent);
+							break;
+						case AfterCut:
+							priority[0].push_back(e.m_sourceStudent);
+							break;
+						case Finished:
+							break;
+						default:
+							break;
+						}
 					}
 				}
-				//只有一方攻击
-				if (onlyAttacker != s.getCampID() && onlyAttacker != Neutral)
-					s.changeOwnerTo(onlyAttacker);
-				else
+				for (int i = 0; i != 3; ++i)
 				{
-					if (prior[0] > 0)
+					//如果当前优先级有人
+					if (!priority[i].empty())
 					{
-						if (prior[0] != 1)
-							s.changeOwnerTo(Neutral);
+						//存储当前优先级有的阵营
+						set<TCamp> camps;
+						for (TTentacleID id : priority[i])
+							camps.insert(data.students[i].getCampID());
+						//如果当前优先级只有1个阵营
+						if (camps.size() == 1)
+							s.changeOwnerTo(*camps.begin());
 						else
-							for (TTentacleID id : s.attackedBy())
-								if()
+							s.changeOwnerTo(Neutral);
 					}
 				}
 			}
 		}
+		else      //对应中立细胞
+			for (TransEffect& e : Effects)
+			{
+				if (e.m_targetStudent == s.ID())
+					s.N_addOcuppyPoint(data.students[e.m_sourceStudent].getCampID(), e.m_resourceToTarget);
+			}
 	}
+}
+
+void Game::subRoundPhase()
+{
+	for (std::pair<const TCamp,Player>& p:data.players)
+	{
+		if (p.second.skillLeftRound() != 0)
+		{
+			p.second.setSkillLeftRound(p.second.skillLeftRound() - 1);
+			/*有些量的改变
+			if (p.second.skillLeftRound() == 0)
+			{
+			
+			}
+			*/
+		}
+		if (p.second.HackedLeftRound() != 0)
+			p.second.setHackedRound(p.second.HackedLeftRound() - 1);
+		
+		//非[技能中经管]更新最大操作
+		if (p.second.skillLeftRound() == 0 || p.second.getDepartment() == Economy)
+			p.second.updateMaxControl();
+	}
+}
+
+void Game::killPlayer(TCamp id)
+{
+	data.players[id].Kill();
+	playerAlive--;
+}
+
+void Game::updateLog()
+{
+	//向LogFile中传输信息
 }

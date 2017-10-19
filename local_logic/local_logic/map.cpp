@@ -6,9 +6,6 @@
 #include "player.h"
 #include "tentacle.h"
 
-Map::Map(DATA::Data* _data):data(_data)
-{
-}
 
 bool Map::init(ifstream& inMap,TResourceI _MAX_RESOURCE_)  //Í¨¹ıÎÄ¼şÁ÷³õÊ¼»¯ĞÅÏ¢
 {
@@ -50,7 +47,7 @@ bool Map::init(ifstream& inMap,TResourceI _MAX_RESOURCE_)  //Í¨¹ıÎÄ¼şÁ÷³õÊ¼»¯ĞÅÏ
 			_stu.push_back(_tempid);
 		}
 		Player player(data, static_cast<TDepartment>(_department), _stu);
-		data->players.push_back(player);
+		data->players.insert({ player.ID(),player });
 		_stu.clear();   //Çå¿Õ·½±ãÑ­»·¸´ÓÃ
 	}
 
@@ -76,7 +73,7 @@ bool Map::init(ifstream& inMap,TResourceI _MAX_RESOURCE_)  //Í¨¹ıÎÄ¼şÁ÷³õÊ¼»¯ĞÅÏ
 		else
 			_maxResource = _MAX_RESOURCE_;
 		Student stu(data, _point, _camp, _resource,_maxResource, special, _techPoint);
-		data->students.push_back(stu);
+		data->students.insert({ stu.ID(),stu });
 	}
 	return true;
 }

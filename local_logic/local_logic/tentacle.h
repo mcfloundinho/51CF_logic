@@ -13,6 +13,7 @@ struct TransEffect
 	TId            m_sourceStudent;                   //源同学
 	TResourceD     m_resourceToTarget = 0.0;          //给目标的资源数
 	TResourceD     m_resourceToSource = 0.0;          //给源的资源数
+	TentacleStatus m_currStatus;                      //当前状态-用于判定归属时
 };
 
 class Tentacle:public Object<Tentacle>
@@ -33,8 +34,8 @@ public:
 	//新建触手
 	Tentacle(TId source, TId target, DATA::Data* _data);
 	//切断触手，position为从源细胞算起的资源数，返回值表示是否成功
-	bool cut(int position = 0);
 	
+	bool cut(TResourceD position = 0);
 	//结算移动
 	TransEffect move();
 	//结算运输

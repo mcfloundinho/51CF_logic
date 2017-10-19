@@ -130,11 +130,10 @@ struct StudentInfo
 	TId id;
 	StudentType type;
 	TId playerId;
-	vector<TId> tentacleIds;
+	vector<TTentacleID> tentacleIds;
 	TResourceD resource;
 	TResourceD occupyPoint; 
-	vector<TId> attackTo;
-	vector<TId> attackBy;
+	vector<TTentacleID> attackBy;
 	TPoint position;
 };
 
@@ -161,14 +160,15 @@ struct PlayerInfo
 
 struct TentacleInfo
 {
-	TId             sourceStudent;              //源同学
-	TId             targetStudent;              //目标同学
+	TTentacleID     id;
+	TStudentID            sourceStudent;              //源同学
+	TStudentID             targetStudent;              //目标同学
 	TentacleStatus  status;                     //触手状态
 	TLength         length;                     //触手长度（由源/目标决定）
 	TResourceI      resource;                   //当前资源      （切断前有效）
 	TResourceI      frontResource;              //切断后前方资源（切断后有效）
 	TResourceI      backResource;               //切断后后方资源（切断后有效）
-	TId             enemyTentacle;              //对方触手
+	TTentacleID            enemyTentacle;              //对方触手
 };
 
 struct TBarrier
@@ -269,9 +269,9 @@ struct Info
 	int myMaxControl;   //最大操作数
 	TRound round;     //回合数
 	CommandList myCommandList;
-	vector<PlayerInfo> playerInfo;   //势力信息
-	vector<StudentInfo> studentInfo; //同学信息
-	vector<TentacleInfo> tentacleInfo; //触手信息
+	map<TCamp,PlayerInfo> playerInfo;   //势力信息
+	map<TStudentID,StudentInfo> studentInfo; //同学信息
+	map<TTentacleID, TentacleInfo> tentacleInfo; //触手信息
 	BaseMap* mapInfo;  //地图信息
 };
 

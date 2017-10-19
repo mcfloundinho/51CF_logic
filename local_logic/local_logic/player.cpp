@@ -70,21 +70,19 @@ bool Player::_upgradeDefence()
 }
 
 
-void Player::addStudent(TId student)
+void Player::addStudent(TStudentID student)
 {
-	m_students.push_back(student);
+	m_students.insert(student);
 }
 
-void Player::removeStudent(TId student)
+void Player::removeStudent(TStudentID student)
 {
-	for (int i = 0; i != m_students.size(); ++i)
-		if (m_students[i] == student)
-			m_students.erase(m_students.begin() + i);
+	m_students.erase(student);
 }
 
-void Player::setHacked(bool isHacked)
+void Player::setHacked(TRound HachRound)
 {
-	m_hacked = isHacked;
+	m_hackedLeftRound = HachRound;
 }
 
 bool Player::upgrade(TPlayerPowerProperty property)

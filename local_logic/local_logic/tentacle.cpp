@@ -24,7 +24,7 @@ Tentacle::Tentacle(TId source, TId target, DATA::Data* _data):
 	}
 }
 
-bool Tentacle::cut(int position /*= 0*/)
+bool Tentacle::cut(TResourceD position /*= 0*/)
 {
 	switch (m_status)
 	{
@@ -38,8 +38,11 @@ bool Tentacle::cut(int position /*= 0*/)
 		m_resource = 0;
 		return true;
 	case Arrived:
-		//如果位置不合法则返回False
-		if (m_resource < position)return false;
+		//如果位置不合法则按两端处理
+		if (m_resource < position)
+			position = m_resource;
+		else if (position < 0)
+			position = 0;
 		m_backResource = position;
 		m_frontResource = m_resource - position;
 		m_resource = 0;
@@ -149,25 +152,24 @@ void Tentacle::finish()
 	m_status = Finished;
 
 	//源细胞中移除该触手
-	vector<TId>& sourceTeneacles = data->students[m_sourceStudent].getTentacles();
-	for (int i = 0; i != sourceTeneacles.size(); ++i)
-		if (sourceTeneacles[i] == ID())
-			sourceTeneacles.erase(sourceTeneacles.begin() + i);
+	set<TId>& sourceTeneacles = data->students[m_sourceStudent].getTentacles();
+	sourceTeneacles.erase(ID());
 
 	//目标细胞中移除该触手
-	vector<TId>& targetTeneacles = data->students[m_targetStudent].attackedBy();
-	for (int i = 0; i != targetTeneacles.size(); ++i)
-		if (targetTeneacles[i] == ID())
-			targetTeneacles.erase(targetTeneacles.begin() + i);
+	set<TId>& targetTeneacles = data->students[m_targetStudent].attackedBy();
+	targetTeneacles.erase(ID());
 
 	//设置对峙触手属性
 	if (m_enemyTentacle != NO_DATA)
 		data->tentacles[m_enemyTentacle].setEnemyTentacle(NO_DATA);
+
+	
 }
 
 TransEffect Tentacle::move()
 {
 	TransEffect te;
+	te.m_currStatus = m_status;
 	te.m_resourceToSource = te.m_resourceToTarget = 0;
 	te.m_sourceStudent = m_sourceStudent;
 	te.m_targetStudent = m_targetStudent;
@@ -257,14 +259,26 @@ TransEffect Tentacle::move()
 	default:
 		break;
 	}
+
+	//判定：是否把源细胞资源减至0
+	//如果减至0则切断出售（返回）
+	if (m_resource - newResource > data->students[m_sourceStudent].getLeftLA())
+	{
+		newResource = m_resource + data->students[m_sourceStudent].getLeftLA();
+		m_resource = newResource;
+		cut(m_resource);
+	}
+	else
+		m_resource = newResource;
+	//返回对源细胞的影响-切断情况已经在函数内讨论过故不用在Game中再次讨论
 	te.m_resourceToSource = m_resource - newResource;
-	m_resource = newResource;
 	return te;
 }
 
 TransEffect Tentacle::transport()
 {
 	TransEffect te;
+	te.m_currStatus = m_status;
 	te.m_resourceToSource = te.m_resourceToTarget = 0;
 	te.m_sourceStudent = m_sourceStudent;
 	te.m_targetStudent = m_targetStudent;
