@@ -47,7 +47,7 @@ void Student::addLA()
 	//¼¼ÄÜÌØÅÐ
 	if (data->players[m_campID].HackedLeftRound() > 0)
 		extraPower /= 2;
-	if (data->players[m_campID].skillLeftRound > 0
+	if (data->players[m_campID].skillLeftRound() > 0
 		&& data->players[m_campID].getDepartment() == Medical)
 		extraPower *= 2;
 	m_resource += RegenerationSpeedStage[level] * m_property.m_regenarationSpeed * extraPower;

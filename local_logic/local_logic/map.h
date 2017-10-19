@@ -6,7 +6,7 @@
 using namespace std;
 namespace DATA 
 {
-	class Data;
+	struct Data;
 }
 
 

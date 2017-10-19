@@ -5,7 +5,7 @@
 Tentacle::Tentacle(TId source, TId target, DATA::Data* _data):
 	Object(), m_sourceStudent(source), m_targetStudent(target),data(_data),
 	m_length(getDistance(data->students[source].getPos(), data->students[target].getPos())),
-	m_maxResource(m_length*Density)
+	m_maxResource(TResourceI(m_length*Density))
 {
 	m_resource = 0;
 	m_backResource = 0;
@@ -49,6 +49,7 @@ bool Tentacle::cut(TResourceD position /*= 0*/)
 		return true;
 	case AfterCut:
 	case Finished:
+	default:
 		std::cerr << "Cut at invalid tentacle!" << std::endl;
 		return false;
 	}

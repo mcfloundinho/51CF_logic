@@ -37,16 +37,17 @@ bool Map::init(ifstream& inMap,TResourceI _MAX_RESOURCE_)  //Í¨¹ıÎÄ¼şÁ÷³õÊ¼»¯ĞÅÏ
 	inMap >> campNum;
 	int _department;
 	int stuNum,_tempid;
-	vector<TStudentID> _stu;
+	set<TStudentID> _stu;
 	for (int i = 0; i < campNum; i++)
 	{
 		inMap >> _department >> stuNum;
 		for (int i = 0; i != stuNum; ++i)
 		{
 			inMap >> _tempid;
-			_stu.push_back(_tempid);
+			_stu.insert(_tempid);
 		}
 		Player player(data, static_cast<TDepartment>(_department), _stu);
+
 		data->players.insert({ player.ID(),player });
 		_stu.clear();   //Çå¿Õ·½±ãÑ­»·¸´ÓÃ
 	}

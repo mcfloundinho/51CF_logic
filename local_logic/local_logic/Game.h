@@ -16,7 +16,6 @@ class Game
 public:
 	void init(string filename);//初始化信息
 	void run();                //开始跑代码
-	//void Run(vector<vector<>>)
 private:
 	vector<Info>* generateInfo();
 	void Round();             //每个回合

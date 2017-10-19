@@ -9,7 +9,7 @@
 #include <set>
 namespace DATA
 {
-	class Data;
+	struct Data;
 }
 using namespace std;
 

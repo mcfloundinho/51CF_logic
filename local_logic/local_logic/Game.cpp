@@ -1,3 +1,4 @@
+#pragma warning( disable : 4996 )
 #include "Game.h"
 #include <set>
 #include <iostream>
@@ -109,11 +110,12 @@ vector<Info>* Game::generateInfo()
 
 	//初始化地图，基类指针
 	mapInfo = &data.gameMap;   
-
+	
 	for (int i = 0; i != playerSize; ++i)
 	{
-		info->emplace_back(playerSize, playerAlive, i, playerInfo[i].maxControlNumber, currentRound,
-			CommandList(), playerInfo, studentInfo, tentacleInfo, mapInfo);
+		Info _i = { playerSize, playerAlive, i, playerInfo[i].maxControlNumber, currentRound,
+			CommandList(), playerInfo, studentInfo, tentacleInfo, mapInfo };
+		info->push_back(_i);
 	}
 
 	return info;

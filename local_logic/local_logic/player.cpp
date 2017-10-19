@@ -3,7 +3,7 @@
 using namespace DATA;
 
 
-Player::Player(DATA::Data* _data, TDepartment _department, std::vector<TId> _stu) :
+Player::Player(DATA::Data* _data, TDepartment _department, std::set<TId> _stu) :
 	data(_data), m_department(_department), m_students(_stu)
 {
 
@@ -102,6 +102,7 @@ bool Player::upgrade(TPlayerPowerProperty property)
 		return _upgradeDefence();
 		break;
 	default:
+		return false;
 		break;
 	}
 }

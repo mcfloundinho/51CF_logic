@@ -7,7 +7,7 @@
 #include <set>
 namespace DATA
 {
-	class Data;
+	struct Data;
 }
 
 class Student;
@@ -39,7 +39,8 @@ private:
 	bool _upgradeDefence();
 
 public:
-	Player(DATA::Data* _data, TDepartment _department, std::vector<TId> _stu);
+	Player():Object(NO_DATA),data(nullptr){}
+	Player(DATA::Data* _data, TDepartment _department, std::set<TId> _stu);
 
 	void addStudent(TStudentID student);             //增加同学
 	void removeStudent(TStudentID student);          //减少同学

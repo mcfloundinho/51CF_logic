@@ -4,7 +4,7 @@
 #include "object.h"
 namespace DATA
 {
-	class Data;
+	struct Data;
 }
 //用来表示对目标同学结算效果的临时变量
 struct TransEffect
@@ -19,19 +19,21 @@ struct TransEffect
 class Tentacle:public Object<Tentacle>
 {
 private:
-	const TId             m_sourceStudent;              //源同学
-	const TId             m_targetStudent;              //目标同学
+	const TStudentID             m_sourceStudent;              //源同学
+	const TStudentID             m_targetStudent;              //目标同学
 	      TentacleStatus  m_status;                     //触手状态
 	const TLength         m_length;                     //触手长度（由源/目标决定）
 	const TResourceI      m_maxResource;
 	      TResourceD      m_resource;                   //当前资源      （切断前有效）
 	      TResourceD      m_frontResource;              //切断后前方资源（切断后有效）
 	      TResourceD      m_backResource;               //切断后后方资源（切断后有效）
-	      TId             m_enemyTentacle;              //对方触手
+	      TTentacleID             m_enemyTentacle;              //对方触手
 		  DATA::Data* const     data;
 
 public:
 	//新建触手
+	Tentacle():Object(NO_DATA),m_sourceStudent(NO_DATA),
+		m_targetStudent(NO_DATA),m_length(0),m_maxResource(0),data(nullptr){}
 	Tentacle(TId source, TId target, DATA::Data* _data);
 	//切断触手，position为从源细胞算起的资源数，返回值表示是否成功
 	
@@ -50,9 +52,9 @@ public:
 	const TId            getSourceStudent() const { return m_sourceStudent; }
 	      TentacleStatus getStatus()        const { return m_status; }
 	const TLength        getLength()        const { return m_length; }
-	      TResourceI     getResource()      const { return m_resource; }
-	      TResourceI     getFrontResource() const { return m_frontResource; }
-	      TResourceI     getBackResource()  const { return m_backResource; }
+	      TResourceD     getResource()      const { return m_resource; }
+	      TResourceD     getFrontResource() const { return m_frontResource; }
+	      TResourceD     getBackResource()  const { return m_backResource; }
 		  TTentacleID    getEnemyTentacle() const { return m_enemyTentacle; }
 		  void           setEnemyTentacle(TId enemy) { m_enemyTentacle = enemy; }
 		  void           setStatus(TentacleStatus ts) { m_status = ts; }
