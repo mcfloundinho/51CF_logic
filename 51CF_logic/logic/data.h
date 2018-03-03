@@ -20,6 +20,7 @@ namespace DATA//Ãû¿Õ¼ä
 
 		Tentacle*** tentacles;
 		int TentacleNum;
+		int TentacleCount;
 
 		Player* players;
 		int PlayerNum;

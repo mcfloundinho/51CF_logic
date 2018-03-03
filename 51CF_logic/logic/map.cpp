@@ -72,6 +72,7 @@ bool Map::init(ifstream& inMap,TResourceI _MAX_RESOURCE_, bool enableOutput)  //
 			data->cells[i].init(_id, data, _point, _camp, _resource, _maxResource, _techPower);
 		}
 	}
+	data->TentacleCount = 0;
 	return true;
 }
 

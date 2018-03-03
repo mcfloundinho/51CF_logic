@@ -19,6 +19,7 @@ typedef double TTechPoint;  //科技点数
 typedef double TLength;
 typedef int    TCellID;
 typedef int    TPlayerID;
+typedef int    TTentacleID;
 
 typedef int    TPosition;
 
